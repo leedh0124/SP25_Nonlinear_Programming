@@ -4,12 +4,12 @@ from plot_results import plot_feasible_region_and_contours
 import matplotlib.pyplot as plt
 
 
-def run_test(G, c, A, b, starting_point, idx):
+def run_test(G, c, A, b, C, d, starting_point, idx):
     
     print("\n======================================")
     print(f"Testing with starting point: {starting_point}")
     x0 = np.array(starting_point)
-    x_opt, lambda_opt, history = active_set_qp(G, c, A, b, x0)
+    x_opt, lambda_opt, history = active_set_qp(G, c, A, b, C, d, x0)
     
     print("\nFinal solution:")
     print("x* =", x_opt)
@@ -21,7 +21,7 @@ def run_test(G, c, A, b, starting_point, idx):
         print(f"Iteration {k}: W = {W}, f(x) = {f_val:.4f}, α = {alpha}, ||p||² = {p_norm_sq:.4e}, x = {x_iterate}")
         
     # Plot the iterates.
-    fig, ax = plot_feasible_region_and_contours(G, c, A, b)
+    fig, ax = plot_feasible_region_and_contours(G, c, A, b, C, d)
     colors = ['magenta', 'orange', 'cyan']  # one color per starting point
     markers = ['o', 's', '^']
     
@@ -68,9 +68,11 @@ if __name__ == "__main__":
         [0, 1]
     ])
     b = np.array([-1.0, -2.0, 0.0, 0.0])
+    C = np.array([])
+    d = np.array([])
     # Test with starting points (0.5,0.5), (0,0), and (1,0).
     for idx, sp in enumerate([(0.5, 0.5), (0, 0), (1, 0)]):
-        run_test(G, c, A, b, sp, idx)
+        run_test(G, c, A, b, C, d, sp, idx)
         
     # (b) Define QP data.
         # (a) Define QP data.
@@ -83,8 +85,27 @@ if __name__ == "__main__":
         [0, 1]
     ])
     b = np.array([-3.0, 0.0, 0.0])
+    C = np.array([])
+    d = np.array([])
     # Test with starting points (0.5,0.5), (0,0), and (1,0).
     for idx, sp in enumerate([(0.5, 0.5), (0, 0), (1, 0)]):
-        run_test(G, c, A, b, sp, idx)
+        run_test(G, c, A, b, C, d, sp, idx)
+        
+    # (Misc) Define QP data.
+    G = np.array([[2, 0],
+                  [0, 4]])
+    c = np.array([-1, -2])
+    A = np.array([
+        [1, 0],
+        [0, -1],
+        [-1, 3],
+        [-1, -1]
+    ])
+    b = np.array([1, -3, -1, -5])
+    C = np.array([[1, 1]])
+    d = np.array([3])
+    # Test with starting points (0.5,0.5), (0,0), and (1,0).
+    for idx, sp in enumerate([(1, 2), (2.5, 0.5), (2, 1)]):
+        run_test(G, c, A, b, C, d, sp, idx)
     
     
